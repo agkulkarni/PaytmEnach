@@ -1,0 +1,604 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+      <Schema Namespace="PaytmEnachModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <EntityType Name="AccountDetails">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="AccHolderName" Type="nvarchar" MaxLength="500" Nullable="false" />
+          <Property Name="AccountNumber" Type="nvarchar" MaxLength="200" Nullable="false" />
+          <Property Name="IFSCCode" Type="nvarchar" MaxLength="500" Nullable="false" />
+          <Property Name="BankCode" Type="nvarchar" MaxLength="10" Nullable="false" />
+          <Property Name="BankName" Type="nvarchar" MaxLength="500" Nullable="false" />
+          <Property Name="AccountType" Type="nvarchar" MaxLength="500" Nullable="false" />
+          <Property Name="AuthMode" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="MandateMode" Type="nvarchar" MaxLength="100" />
+          <Property Name="NPCI_REF_ID" Type="varchar" MaxLength="100" />
+          <Property Name="RejectedBy" Type="nvarchar" MaxLength="500" />
+          <Property Name="MandateFormDownloadURL" Type="nvarchar(max)" />
+          <Property Name="MandateFormUploadURL" Type="nvarchar(max)" />
+          <Property Name="PolicyForm" Type="nvarchar(max)" />
+        </EntityType>
+        <EntityType Name="FrequencyUnitMaster">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="FrequencyUnit" Type="nvarchar" MaxLength="500" Nullable="false" />
+        </EntityType>
+        <EntityType Name="SIPData">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="StartDate" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="EndDate" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="Frequency" Type="int" Nullable="false" />
+          <Property Name="FrequencyUnit" Type="int" Nullable="false" />
+          <Property Name="Amount" Type="decimal" Precision="9" Scale="2" Nullable="false" />
+          <Property Name="CustomerID" Type="int" Nullable="false" />
+        </EntityType>
+        <EntityType Name="SIPRegistrationData">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="SubsID" Type="nvarchar(max)" />
+          <Property Name="txnToken" Type="nvarchar(max)" />
+          <Property Name="IsTransactionInit" Type="bit" />
+          <Property Name="TranInitResultCode" Type="nvarchar" MaxLength="50" />
+          <Property Name="TranInitResultStatus" Type="nvarchar" MaxLength="1000" />
+          <Property Name="IsMandateFormDowloaded" Type="bit" />
+          <Property Name="MandateFormDownloadResultCode" Type="nvarchar" MaxLength="50" />
+          <Property Name="MandateFormDownloadResultStatus" Type="nvarchar" MaxLength="50" />
+          <Property Name="IsMandateFormUploaded" Type="bit" />
+          <Property Name="MandateFormUploadResultCode" Type="nvarchar" MaxLength="50" />
+          <Property Name="MandateFormUploadResultStatus" Type="nchar" MaxLength="10" />
+          <Property Name="InsertDate" Type="datetime" Nullable="false" />
+          <Property Name="UpdateDate" Type="datetime" />
+          <Property Name="InsertUserID" Type="int" Nullable="false" />
+          <Property Name="UpdateUserID" Type="int" Nullable="false" />
+          <Property Name="SIPID" Type="int" Nullable="false" />
+          <Property Name="OrderID" Type="nvarchar" MaxLength="100" />
+          <Property Name="AccountDetails" Type="bigint" />
+        </EntityType>
+        <EntityType Name="UserMaster">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Name" Type="nvarchar(max)" Nullable="false" />
+          <Property Name="DOB" Type="datetime" Nullable="false" />
+          <Property Name="Email" Type="nvarchar" MaxLength="500" Nullable="false" />
+          <Property Name="Mobile" Type="nvarchar" MaxLength="10" />
+          <Property Name="AadharNumber" Type="nvarchar" MaxLength="500" />
+          <Property Name="PANNumber" Type="nvarchar" MaxLength="20" />
+          <Property Name="PassportNumber" Type="nvarchar" MaxLength="50" />
+          <Property Name="InsertDate" Type="datetime" Nullable="false" />
+          <Property Name="InsertUserID" Type="int" />
+          <Property Name="UpdateDate" Type="datetime" />
+          <Property Name="UpdateUserID" Type="int" />
+          <Property Name="IsUserActive" Type="bit" Nullable="false" />
+        </EntityType>
+        <Association Name="FK_SIPData_SIPData">
+          <End Role="FrequencyUnitMaster" Type="Self.FrequencyUnitMaster" Multiplicity="1" />
+          <End Role="SIPData" Type="Self.SIPData" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="FrequencyUnitMaster">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="SIPData">
+              <PropertyRef Name="FrequencyUnit" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_SIPData_UserMaster">
+          <End Role="UserMaster" Type="Self.UserMaster" Multiplicity="1" />
+          <End Role="SIPData" Type="Self.SIPData" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="UserMaster">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="SIPData">
+              <PropertyRef Name="CustomerID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_SIPRegistrationData_AccountDetails">
+          <End Role="AccountDetails" Type="Self.AccountDetails" Multiplicity="0..1" />
+          <End Role="SIPRegistrationData" Type="Self.SIPRegistrationData" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="AccountDetails">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="SIPRegistrationData">
+              <PropertyRef Name="AccountDetails" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_SIPRegistrationData_SIPData">
+          <End Role="SIPData" Type="Self.SIPData" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="SIPRegistrationData" Type="Self.SIPRegistrationData" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="SIPData">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="SIPRegistrationData">
+              <PropertyRef Name="SIPID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_SIPRegistrationData_UserMaster1">
+          <End Role="UserMaster" Type="Self.UserMaster" Multiplicity="1" />
+          <End Role="SIPRegistrationData" Type="Self.SIPRegistrationData" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="UserMaster">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="SIPRegistrationData">
+              <PropertyRef Name="InsertUserID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_SIPRegistrationData_UserMaster2">
+          <End Role="UserMaster" Type="Self.UserMaster" Multiplicity="1" />
+          <End Role="SIPRegistrationData" Type="Self.SIPRegistrationData" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="UserMaster">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="SIPRegistrationData">
+              <PropertyRef Name="UpdateUserID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_UserMaster_UserMaster">
+          <End Role="UserMaster" Type="Self.UserMaster" Multiplicity="0..1" />
+          <End Role="UserMaster1" Type="Self.UserMaster" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="UserMaster">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="UserMaster1">
+              <PropertyRef Name="InsertUserID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_UserMaster_UserMaster1">
+          <End Role="UserMaster" Type="Self.UserMaster" Multiplicity="0..1" />
+          <End Role="UserMaster1" Type="Self.UserMaster" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="UserMaster">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="UserMaster1">
+              <PropertyRef Name="UpdateUserID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Function Name="CreateUser" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="UserName" Type="nvarchar(max)" Mode="In" />
+          <Parameter Name="DOB" Type="datetime" Mode="In" />
+          <Parameter Name="Email" Type="nvarchar" Mode="In" />
+          <Parameter Name="Mobile" Type="nvarchar" Mode="In" />
+          <Parameter Name="AadharNumber" Type="nvarchar" Mode="In" />
+          <Parameter Name="PANNumber" Type="nvarchar" Mode="In" />
+          <Parameter Name="PassportNumber" Type="nvarchar" Mode="In" />
+          <Parameter Name="UserID" Type="int" Mode="In" />
+          <Parameter Name="InsupdUsrID" Type="int" Mode="In" />
+          <Parameter Name="Active" Type="bit" Mode="In" />
+          <Parameter Name="Mode" Type="nvarchar" Mode="In" />
+        </Function>
+        <EntityContainer Name="PaytmEnachModelStoreContainer">
+          <EntitySet Name="AccountDetails" EntityType="Self.AccountDetails" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="FrequencyUnitMaster" EntityType="Self.FrequencyUnitMaster" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="SIPData" EntityType="Self.SIPData" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="SIPRegistrationData" EntityType="Self.SIPRegistrationData" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="UserMaster" EntityType="Self.UserMaster" Schema="dbo" store:Type="Tables" />
+          <AssociationSet Name="FK_SIPData_SIPData" Association="Self.FK_SIPData_SIPData">
+            <End Role="FrequencyUnitMaster" EntitySet="FrequencyUnitMaster" />
+            <End Role="SIPData" EntitySet="SIPData" />
+          </AssociationSet>
+          <AssociationSet Name="FK_SIPData_UserMaster" Association="Self.FK_SIPData_UserMaster">
+            <End Role="UserMaster" EntitySet="UserMaster" />
+            <End Role="SIPData" EntitySet="SIPData" />
+          </AssociationSet>
+          <AssociationSet Name="FK_SIPRegistrationData_AccountDetails" Association="Self.FK_SIPRegistrationData_AccountDetails">
+            <End Role="AccountDetails" EntitySet="AccountDetails" />
+            <End Role="SIPRegistrationData" EntitySet="SIPRegistrationData" />
+          </AssociationSet>
+          <AssociationSet Name="FK_SIPRegistrationData_SIPData" Association="Self.FK_SIPRegistrationData_SIPData">
+            <End Role="SIPData" EntitySet="SIPData" />
+            <End Role="SIPRegistrationData" EntitySet="SIPRegistrationData" />
+          </AssociationSet>
+          <AssociationSet Name="FK_SIPRegistrationData_UserMaster1" Association="Self.FK_SIPRegistrationData_UserMaster1">
+            <End Role="UserMaster" EntitySet="UserMaster" />
+            <End Role="SIPRegistrationData" EntitySet="SIPRegistrationData" />
+          </AssociationSet>
+          <AssociationSet Name="FK_SIPRegistrationData_UserMaster2" Association="Self.FK_SIPRegistrationData_UserMaster2">
+            <End Role="UserMaster" EntitySet="UserMaster" />
+            <End Role="SIPRegistrationData" EntitySet="SIPRegistrationData" />
+          </AssociationSet>
+          <AssociationSet Name="FK_UserMaster_UserMaster" Association="Self.FK_UserMaster_UserMaster">
+            <End Role="UserMaster" EntitySet="UserMaster" />
+            <End Role="UserMaster1" EntitySet="UserMaster" />
+          </AssociationSet>
+          <AssociationSet Name="FK_UserMaster_UserMaster1" Association="Self.FK_UserMaster_UserMaster1">
+            <End Role="UserMaster" EntitySet="UserMaster" />
+            <End Role="UserMaster1" EntitySet="UserMaster" />
+          </AssociationSet>
+        </EntityContainer>
+      </Schema>
+    </edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema Namespace="PaytmEnachModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+        <EntityType Name="AccountDetail">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="AccHolderName" Type="String" MaxLength="500" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="AccountNumber" Type="String" MaxLength="200" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="IFSCCode" Type="String" MaxLength="500" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="BankCode" Type="String" MaxLength="10" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="BankName" Type="String" MaxLength="500" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="AccountType" Type="String" MaxLength="500" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="AuthMode" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="MandateMode" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="NPCI_REF_ID" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="RejectedBy" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
+          <Property Name="MandateFormDownloadURL" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="MandateFormUploadURL" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="PolicyForm" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="SIPRegistrationDatas" Relationship="Self.FK_SIPRegistrationData_AccountDetails" FromRole="AccountDetails" ToRole="SIPRegistrationData" />
+        </EntityType>
+        <EntityType Name="FrequencyUnitMaster">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="FrequencyUnit" Type="String" MaxLength="500" FixedLength="false" Unicode="true" Nullable="false" />
+          <NavigationProperty Name="SIPDatas" Relationship="Self.FK_SIPData_SIPData" FromRole="FrequencyUnitMaster" ToRole="SIPData" />
+        </EntityType>
+        <EntityType Name="SIPData">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="StartDate" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="EndDate" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="Frequency" Type="Int32" Nullable="false" />
+          <Property Name="FrequencyUnit" Type="Int32" Nullable="false" />
+          <Property Name="Amount" Type="Decimal" Precision="9" Scale="2" Nullable="false" />
+          <Property Name="CustomerID" Type="Int32" Nullable="false" />
+          <NavigationProperty Name="FrequencyUnitMaster" Relationship="Self.FK_SIPData_SIPData" FromRole="SIPData" ToRole="FrequencyUnitMaster" />
+          <NavigationProperty Name="UserMaster" Relationship="Self.FK_SIPData_UserMaster" FromRole="SIPData" ToRole="UserMaster" />
+          <NavigationProperty Name="SIPRegistrationDatas" Relationship="Self.FK_SIPRegistrationData_SIPData" FromRole="SIPData" ToRole="SIPRegistrationData" />
+        </EntityType>
+        <EntityType Name="SIPRegistrationData">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="SubsID" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="txnToken" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="IsTransactionInit" Type="Boolean" />
+          <Property Name="TranInitResultCode" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="TranInitResultStatus" Type="String" MaxLength="1000" FixedLength="false" Unicode="true" />
+          <Property Name="IsMandateFormDowloaded" Type="Boolean" />
+          <Property Name="MandateFormDownloadResultCode" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="MandateFormDownloadResultStatus" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="IsMandateFormUploaded" Type="Boolean" />
+          <Property Name="MandateFormUploadResultCode" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="MandateFormUploadResultStatus" Type="String" MaxLength="10" FixedLength="true" Unicode="true" />
+          <Property Name="InsertDate" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="UpdateDate" Type="DateTime" Precision="3" />
+          <Property Name="InsertUserID" Type="Int32" Nullable="false" />
+          <Property Name="UpdateUserID" Type="Int32" Nullable="false" />
+          <Property Name="SIPID" Type="Int32" Nullable="false" />
+          <Property Name="OrderID" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="AccountDetails" Type="Int64" />
+          <NavigationProperty Name="AccountDetail" Relationship="Self.FK_SIPRegistrationData_AccountDetails" FromRole="SIPRegistrationData" ToRole="AccountDetails" />
+          <NavigationProperty Name="SIPData" Relationship="Self.FK_SIPRegistrationData_SIPData" FromRole="SIPRegistrationData" ToRole="SIPData" />
+          <NavigationProperty Name="UserMaster" Relationship="Self.FK_SIPRegistrationData_UserMaster1" FromRole="SIPRegistrationData" ToRole="UserMaster" />
+          <NavigationProperty Name="UserMaster1" Relationship="Self.FK_SIPRegistrationData_UserMaster2" FromRole="SIPRegistrationData" ToRole="UserMaster" />
+        </EntityType>
+        <EntityType Name="UserMaster">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Name" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="DOB" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="Email" Type="String" MaxLength="500" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="Mobile" Type="String" MaxLength="10" FixedLength="false" Unicode="true" />
+          <Property Name="AadharNumber" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
+          <Property Name="PANNumber" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
+          <Property Name="PassportNumber" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="InsertDate" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="InsertUserID" Type="Int32" />
+          <Property Name="UpdateDate" Type="DateTime" Precision="3" />
+          <Property Name="UpdateUserID" Type="Int32" />
+          <Property Name="IsUserActive" Type="Boolean" Nullable="false" />
+          <NavigationProperty Name="SIPDatas" Relationship="Self.FK_SIPData_UserMaster" FromRole="UserMaster" ToRole="SIPData" />
+          <NavigationProperty Name="SIPRegistrationDatas" Relationship="Self.FK_SIPRegistrationData_UserMaster1" FromRole="UserMaster" ToRole="SIPRegistrationData" />
+          <NavigationProperty Name="SIPRegistrationDatas1" Relationship="Self.FK_SIPRegistrationData_UserMaster2" FromRole="UserMaster" ToRole="SIPRegistrationData" />
+          <NavigationProperty Name="UserMaster1" Relationship="Self.FK_UserMaster_UserMaster" FromRole="UserMaster" ToRole="UserMaster1" />
+          <NavigationProperty Name="UserMaster2" Relationship="Self.FK_UserMaster_UserMaster" FromRole="UserMaster1" ToRole="UserMaster" />
+          <NavigationProperty Name="UserMaster11" Relationship="Self.FK_UserMaster_UserMaster1" FromRole="UserMaster" ToRole="UserMaster1" />
+          <NavigationProperty Name="UserMaster3" Relationship="Self.FK_UserMaster_UserMaster1" FromRole="UserMaster1" ToRole="UserMaster" />
+        </EntityType>
+        <Association Name="FK_SIPRegistrationData_AccountDetails">
+          <End Role="AccountDetails" Type="Self.AccountDetail" Multiplicity="0..1" />
+          <End Role="SIPRegistrationData" Type="Self.SIPRegistrationData" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="AccountDetails">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="SIPRegistrationData">
+              <PropertyRef Name="AccountDetails" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_SIPData_SIPData">
+          <End Role="FrequencyUnitMaster" Type="Self.FrequencyUnitMaster" Multiplicity="1" />
+          <End Role="SIPData" Type="Self.SIPData" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="FrequencyUnitMaster">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="SIPData">
+              <PropertyRef Name="FrequencyUnit" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_SIPData_UserMaster">
+          <End Role="UserMaster" Type="Self.UserMaster" Multiplicity="1" />
+          <End Role="SIPData" Type="Self.SIPData" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="UserMaster">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="SIPData">
+              <PropertyRef Name="CustomerID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_SIPRegistrationData_SIPData">
+          <End Role="SIPData" Type="Self.SIPData" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="SIPRegistrationData" Type="Self.SIPRegistrationData" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="SIPData">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="SIPRegistrationData">
+              <PropertyRef Name="SIPID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_SIPRegistrationData_UserMaster1">
+          <End Role="UserMaster" Type="Self.UserMaster" Multiplicity="1" />
+          <End Role="SIPRegistrationData" Type="Self.SIPRegistrationData" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="UserMaster">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="SIPRegistrationData">
+              <PropertyRef Name="InsertUserID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_SIPRegistrationData_UserMaster2">
+          <End Role="UserMaster" Type="Self.UserMaster" Multiplicity="1" />
+          <End Role="SIPRegistrationData" Type="Self.SIPRegistrationData" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="UserMaster">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="SIPRegistrationData">
+              <PropertyRef Name="UpdateUserID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_UserMaster_UserMaster">
+          <End Role="UserMaster" Type="Self.UserMaster" Multiplicity="0..1" />
+          <End Role="UserMaster1" Type="Self.UserMaster" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="UserMaster">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="UserMaster1">
+              <PropertyRef Name="InsertUserID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_UserMaster_UserMaster1">
+          <End Role="UserMaster" Type="Self.UserMaster" Multiplicity="0..1" />
+          <End Role="UserMaster1" Type="Self.UserMaster" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="UserMaster">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="UserMaster1">
+              <PropertyRef Name="UpdateUserID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityContainer Name="PaytmEnachEntities" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="AccountDetails" EntityType="Self.AccountDetail" />
+          <EntitySet Name="FrequencyUnitMasters" EntityType="Self.FrequencyUnitMaster" />
+          <EntitySet Name="SIPDatas" EntityType="Self.SIPData" />
+          <EntitySet Name="SIPRegistrationDatas" EntityType="Self.SIPRegistrationData" />
+          <EntitySet Name="UserMasters" EntityType="Self.UserMaster" />
+          <AssociationSet Name="FK_SIPRegistrationData_AccountDetails" Association="Self.FK_SIPRegistrationData_AccountDetails">
+            <End Role="AccountDetails" EntitySet="AccountDetails" />
+            <End Role="SIPRegistrationData" EntitySet="SIPRegistrationDatas" />
+          </AssociationSet>
+          <AssociationSet Name="FK_SIPData_SIPData" Association="Self.FK_SIPData_SIPData">
+            <End Role="FrequencyUnitMaster" EntitySet="FrequencyUnitMasters" />
+            <End Role="SIPData" EntitySet="SIPDatas" />
+          </AssociationSet>
+          <AssociationSet Name="FK_SIPData_UserMaster" Association="Self.FK_SIPData_UserMaster">
+            <End Role="UserMaster" EntitySet="UserMasters" />
+            <End Role="SIPData" EntitySet="SIPDatas" />
+          </AssociationSet>
+          <AssociationSet Name="FK_SIPRegistrationData_SIPData" Association="Self.FK_SIPRegistrationData_SIPData">
+            <End Role="SIPData" EntitySet="SIPDatas" />
+            <End Role="SIPRegistrationData" EntitySet="SIPRegistrationDatas" />
+          </AssociationSet>
+          <AssociationSet Name="FK_SIPRegistrationData_UserMaster1" Association="Self.FK_SIPRegistrationData_UserMaster1">
+            <End Role="UserMaster" EntitySet="UserMasters" />
+            <End Role="SIPRegistrationData" EntitySet="SIPRegistrationDatas" />
+          </AssociationSet>
+          <AssociationSet Name="FK_SIPRegistrationData_UserMaster2" Association="Self.FK_SIPRegistrationData_UserMaster2">
+            <End Role="UserMaster" EntitySet="UserMasters" />
+            <End Role="SIPRegistrationData" EntitySet="SIPRegistrationDatas" />
+          </AssociationSet>
+          <AssociationSet Name="FK_UserMaster_UserMaster" Association="Self.FK_UserMaster_UserMaster">
+            <End Role="UserMaster" EntitySet="UserMasters" />
+            <End Role="UserMaster1" EntitySet="UserMasters" />
+          </AssociationSet>
+          <AssociationSet Name="FK_UserMaster_UserMaster1" Association="Self.FK_UserMaster_UserMaster1">
+            <End Role="UserMaster" EntitySet="UserMasters" />
+            <End Role="UserMaster1" EntitySet="UserMasters" />
+          </AssociationSet>
+          <FunctionImport Name="CreateUser" ReturnType="Collection(Decimal)">
+            <Parameter Name="UserName" Mode="In" Type="String" />
+            <Parameter Name="DOB" Mode="In" Type="DateTime" />
+            <Parameter Name="Email" Mode="In" Type="String" />
+            <Parameter Name="Mobile" Mode="In" Type="String" />
+            <Parameter Name="AadharNumber" Mode="In" Type="String" />
+            <Parameter Name="PANNumber" Mode="In" Type="String" />
+            <Parameter Name="PassportNumber" Mode="In" Type="String" />
+            <Parameter Name="UserID" Mode="In" Type="Int32" />
+            <Parameter Name="InsupdUsrID" Mode="In" Type="Int32" />
+            <Parameter Name="Active" Mode="In" Type="Boolean" />
+            <Parameter Name="Mode" Mode="In" Type="String" />
+          </FunctionImport>
+        </EntityContainer>
+      </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+      <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+        <EntityContainerMapping StorageEntityContainer="PaytmEnachModelStoreContainer" CdmEntityContainer="PaytmEnachEntities">
+          <EntitySetMapping Name="AccountDetails">
+            <EntityTypeMapping TypeName="PaytmEnachModel.AccountDetail">
+              <MappingFragment StoreEntitySet="AccountDetails">
+                <ScalarProperty Name="ID" ColumnName="ID" />
+                <ScalarProperty Name="AccHolderName" ColumnName="AccHolderName" />
+                <ScalarProperty Name="AccountNumber" ColumnName="AccountNumber" />
+                <ScalarProperty Name="IFSCCode" ColumnName="IFSCCode" />
+                <ScalarProperty Name="BankCode" ColumnName="BankCode" />
+                <ScalarProperty Name="BankName" ColumnName="BankName" />
+                <ScalarProperty Name="AccountType" ColumnName="AccountType" />
+                <ScalarProperty Name="AuthMode" ColumnName="AuthMode" />
+                <ScalarProperty Name="MandateMode" ColumnName="MandateMode" />
+                <ScalarProperty Name="NPCI_REF_ID" ColumnName="NPCI_REF_ID" />
+                <ScalarProperty Name="RejectedBy" ColumnName="RejectedBy" />
+                <ScalarProperty Name="MandateFormDownloadURL" ColumnName="MandateFormDownloadURL" />
+                <ScalarProperty Name="MandateFormUploadURL" ColumnName="MandateFormUploadURL" />
+                <ScalarProperty Name="PolicyForm" ColumnName="PolicyForm" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="FrequencyUnitMasters">
+            <EntityTypeMapping TypeName="PaytmEnachModel.FrequencyUnitMaster">
+              <MappingFragment StoreEntitySet="FrequencyUnitMaster">
+                <ScalarProperty Name="ID" ColumnName="ID" />
+                <ScalarProperty Name="FrequencyUnit" ColumnName="FrequencyUnit" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="SIPDatas">
+            <EntityTypeMapping TypeName="PaytmEnachModel.SIPData">
+              <MappingFragment StoreEntitySet="SIPData">
+                <ScalarProperty Name="ID" ColumnName="ID" />
+                <ScalarProperty Name="StartDate" ColumnName="StartDate" />
+                <ScalarProperty Name="EndDate" ColumnName="EndDate" />
+                <ScalarProperty Name="Frequency" ColumnName="Frequency" />
+                <ScalarProperty Name="FrequencyUnit" ColumnName="FrequencyUnit" />
+                <ScalarProperty Name="Amount" ColumnName="Amount" />
+                <ScalarProperty Name="CustomerID" ColumnName="CustomerID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="SIPRegistrationDatas">
+            <EntityTypeMapping TypeName="PaytmEnachModel.SIPRegistrationData">
+              <MappingFragment StoreEntitySet="SIPRegistrationData">
+                <ScalarProperty Name="ID" ColumnName="ID" />
+                <ScalarProperty Name="SubsID" ColumnName="SubsID" />
+                <ScalarProperty Name="txnToken" ColumnName="txnToken" />
+                <ScalarProperty Name="IsTransactionInit" ColumnName="IsTransactionInit" />
+                <ScalarProperty Name="TranInitResultCode" ColumnName="TranInitResultCode" />
+                <ScalarProperty Name="TranInitResultStatus" ColumnName="TranInitResultStatus" />
+                <ScalarProperty Name="IsMandateFormDowloaded" ColumnName="IsMandateFormDowloaded" />
+                <ScalarProperty Name="MandateFormDownloadResultCode" ColumnName="MandateFormDownloadResultCode" />
+                <ScalarProperty Name="MandateFormDownloadResultStatus" ColumnName="MandateFormDownloadResultStatus" />
+                <ScalarProperty Name="IsMandateFormUploaded" ColumnName="IsMandateFormUploaded" />
+                <ScalarProperty Name="MandateFormUploadResultCode" ColumnName="MandateFormUploadResultCode" />
+                <ScalarProperty Name="MandateFormUploadResultStatus" ColumnName="MandateFormUploadResultStatus" />
+                <ScalarProperty Name="InsertDate" ColumnName="InsertDate" />
+                <ScalarProperty Name="UpdateDate" ColumnName="UpdateDate" />
+                <ScalarProperty Name="InsertUserID" ColumnName="InsertUserID" />
+                <ScalarProperty Name="UpdateUserID" ColumnName="UpdateUserID" />
+                <ScalarProperty Name="SIPID" ColumnName="SIPID" />
+                <ScalarProperty Name="OrderID" ColumnName="OrderID" />
+                <ScalarProperty Name="AccountDetails" ColumnName="AccountDetails" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="UserMasters">
+            <EntityTypeMapping TypeName="PaytmEnachModel.UserMaster">
+              <MappingFragment StoreEntitySet="UserMaster">
+                <ScalarProperty Name="ID" ColumnName="ID" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="DOB" ColumnName="DOB" />
+                <ScalarProperty Name="Email" ColumnName="Email" />
+                <ScalarProperty Name="Mobile" ColumnName="Mobile" />
+                <ScalarProperty Name="AadharNumber" ColumnName="AadharNumber" />
+                <ScalarProperty Name="PANNumber" ColumnName="PANNumber" />
+                <ScalarProperty Name="PassportNumber" ColumnName="PassportNumber" />
+                <ScalarProperty Name="InsertDate" ColumnName="InsertDate" />
+                <ScalarProperty Name="InsertUserID" ColumnName="InsertUserID" />
+                <ScalarProperty Name="UpdateDate" ColumnName="UpdateDate" />
+                <ScalarProperty Name="UpdateUserID" ColumnName="UpdateUserID" />
+                <ScalarProperty Name="IsUserActive" ColumnName="IsUserActive" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <FunctionImportMapping FunctionImportName="CreateUser" FunctionName="PaytmEnachModel.Store.CreateUser" />
+        </EntityContainerMapping>
+      </Mapping>
+    </edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </Connection>
+    <Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="true" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="true" />
+        <DesignerProperty Name="UseLegacyProvider" Value="false" />
+        <DesignerProperty Name="CodeGenerationStrategy" Value="None" />
+      </DesignerInfoPropertySet>
+    </Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <Diagrams></Diagrams>
+  </Designer>
+</edmx:Edmx>
